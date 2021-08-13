@@ -1,0 +1,29 @@
+
+#https://www.cnblogs.com/wang_yb/p/9400291.html  start sequence 
+
+version: '2'
+services:
+  web:
+    image: ubuntu:14.04
+    depends_on:
+      - database
+    command: >
+      /bin/bash -c '
+      while ! nc -z database 3306;
+      do
+        echo "wait for database";
+        sleep 1;
+      done;
+
+      echo "database is ready!";
+      echo "start web service here";
+      '
+
+  database:
+    image: ubuntu:14.04
+    command: >
+      /bin/bash -c '
+      sleep 5;
+      echo "sleep over";
+      nc -lk 0.0.0.0 3306;
+      '

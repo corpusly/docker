@@ -1,0 +1,12 @@
+# 2021-3-4
+FROM wrask/uvirun
+
+RUN apk add --no-cache --virtual .build-deps g++ libc-dev make \
+    && pip install marisa_trie pygtrie numpy pandas pika \
+    && pip install spacy==2.2.4 \
+    && pip install http://ftp.werror.com:8021/tmp/spacy/en_core_web_sm-2.2.5.tar.gz \
+    && pip install textacy 
+
+WORKDIR /
+EXPOSE 80
+CMD python /main.py 

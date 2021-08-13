@@ -1,0 +1,27 @@
+# 2021-2-10  192.168.1.24:5000/cikuusvn:spacy224
+FROM python:3.8-slim
+
+LABEL maintainer="zy <zy@cikuu.com>"
+
+RUN pip install --no-cache-dir uvicorn gunicorn \
+    && pip install fastapi \
+    && pip install fire marisa_trie numpy \
+    && pip install requests \
+    && pip install redis \
+    && pip install spacy==2.2.4 \
+    && pip install http://ftp.werror.com:8021/tmp/en_core_web_sm-2.2.5.tar.gz \
+    && apt-get update \
+    && apt-get install subversion -y \
+    && apt-get install wget -y
+
+WORKDIR /home
+RUN svn co http://117.79.131.116:6666/svn/yankc/cikuu/ --username zhangyue --password zhangy1235 --depth files  && svn up cikuu/app --username zhangyue --password zhangy1235
+
+RUN ln -s /home/cikuu /usr/local/lib/python3.8/site-packages/cikuu && ln -s /home/cikuu /cikuu && ln -s /home/cikuu/uvirun /uvirun
+
+COPY entrypoint_bash.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+
+EXPOSE 80
+CMD ls -l /home/cikuu/app

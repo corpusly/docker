@@ -1,0 +1,11 @@
+# docker build -t wrask/unrar .  |docker run --rm wrask/unrar
+FROM alpine
+MAINTAINER Rethink 
+RUN echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.4/main/" > /etc/apk/repositories
+
+RUN apk update \
+        && apk upgrade \
+        && apk add --no-cache unrar 
+
+WORKDIR /
+CMD ["unrar"]

@@ -1,0 +1,56 @@
+
+
+https://www.jianshu.com/p/8b72eece7df8?from=groupmessage&isappinstalled=0
+
+docker run -it -d  \
+--restart=always -u root \
+-v /usr/bin/docker:/usr/bin/docker \
+-v /var/run/docker.sock:/var/run/docker.sock \
+-v /usr/lib64/libltdl.so.7:/usr/lib/x86_64-linux-gnu/libltdl.so.7 镜像名称
+
+
+
+https://blog.csdn.net/catoop/article/details/91042007
+
+在docker容器中调用和执行宿主机的docker
+
+catoop 2019-06-06 12:11:23  15111  收藏 7
+分类专栏： Docker CICD
+版权
+
+Docker
+同时被 2 个专栏收录
+51 篇文章3 订阅
+订阅专栏
+
+CICD
+15 篇文章3 订阅
+订阅专栏
+首先这个帖子，献给docker新手。当然如果你是一个老手，文中分割线后的操作方法也是一种思路。
+
+首先说一下，如何在docker中执行宿主机的docker操作，我们管它叫docker in docker。
+至于为什么要在docker中操作宿主机的docker，优点不言而喻，你既可以将你的具体需求容器化部署，又不用直接在宿主机上安装（假设我们没有办法在docker中操作宿主机的docker，那么我们只能将这样的软件程序直接安装到宿主机上，这样显然是不利于管理和维护的）。
+
+实现这种需求，其实非常简单，你只需要将docker宿主机的docker文件和docker.sock文件挂载到容器中即可，具体为：
+
+-v /var/run/docker.sock:/var/run/docker.sock 
+-v /usr/bin/docker:/usr/bin/docker
+1
+2
+你要先找到你宿主机的docker和docker.sock位置，别挂载错了，标准的Linux正常来说就是上面的位置。
+
+你在启动docker容器的时候，将上述两个文件正常挂载后，就可以在docker中执行诸如 docker images 等等这样的命令了。
+
+如果出现问题 permission denied
+
+Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock
+…………………………………………………………
+dial unix /var/run/docker.sock: connect: permission denied
+1
+2
+3
+解决方法
+在容器所在的宿主机上直接给 docker.sock 777权限，命令 chmod 777 docker.sock
+————————————————
+版权声明：本文为CSDN博主「catoop」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/catoop/article/details/91042007

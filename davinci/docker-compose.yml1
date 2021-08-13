@@ -1,0 +1,37 @@
+version: '2.0'
+services:
+  davinci:
+    environment:
+      - TZ=Asia/Shanghai
+      - SERVER_ADDRESS=0.0.0.0
+      - SPRING_DATASOURCE_URL=jdbc:mysql://172.17.0.4:3306/davinci0.3?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=cikuutest!
+      - SPRING_DATASOURCE_TEST_ON_BORROW=true
+      - SPRING_DATASOURCE_TIME_BETWEEN_EVICTION_RUNS_MILLIS=6000
+      - SPRING_MAIL_HOST=smtp.163.com
+      - SPRING_MAIL_PORT=465
+      - SPRING_MAIL_USERNAME=corpusly@163.com
+      - SPRING_MAIL_PASSWORD=corpusly123
+      - SPRING_MAIL_NICKNAME=davinci
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_SSL_ENABLE=true
+      - SCREENSHOT_DEFAULT_BROWSER=CHROME
+      - SCREENSHOT_TIMEOUT_SECOND=15
+      - SCREENSHOT_REMOTE_WEBDRIVER_URL=http://172.18.0.4:4444/wd/hub
+    image: "edp963/davinci:latest"
+    ports:
+      - 58080:8080
+    command: ["./bin/docker-entrypoint.sh", "--", "start-server.sh"]
+    restart: always
+    volumes:
+      - davinci_logs:/opt/davinci/logs
+      - davinci_userfiles:/opt/davinci/userfiles
+      - davinci_initdb:/initdb
+      # 如果要使用更多数据源，请将驱动挂载到/opt/davinci/lib/下面，类似下面
+      # - kylin-jdbc-2.6.3.jar.jar:/opt/davinci/lib/kylin-jdbc-2.6.3.jar.jar
+      # - mssql-jdbc-7.0.0.jre8.jar:/opt/davinci/lib/mssql-jdbc-7.0.0.jre8.jar
+
+volumes:
+  davinci_userfiles:
+  davinci_logs:
+  davinci_initdb:

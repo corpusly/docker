@@ -1,0 +1,2 @@
+
+docker run --ulimit nofile=65100:65100 --restart unless-stopped --name sugar-mysql -p 3309:3306 -v /data/mysqldata:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=cikuutest! -d mysql:5.7 --max_allowed_packet=100M --max_connections=1000

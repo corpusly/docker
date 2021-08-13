@@ -1,0 +1,43 @@
+# 1.23,  kvrocks, mysql, mqeev consumer | docker-compose up -d  |  http://ftp.wrask.com:10081/  arc data 
+version: "2.2"
+services:
+  mqeev:
+    image: wrask/mqeev
+    # mqeev.py my-to-eev.py my-to-kvrocks.py 
+    restart: unless-stopped
+    depends_on:
+      - kveev
+      - mysqleev
+
+    command: >
+      /bin/bash -c '
+      while ! nc -z mysqleev 3306;
+      do
+        echo "wait for database";
+        sleep 1;
+      done;
+
+      echo "database is ready!";
+      echo "start now";
+      python mqeev.py eev_to_kv_my_23 --host 192.168.1.23
+      '
+  kveev:
+    image: wrask/kvrocks:2.0.2
+    # docker run -itd --name kveev -p 6666:6666 -v /sdb/cikuu/kveev:/tmp/kvrocks kvrocks/kvrocks
+    ports:
+      - 6666:6666
+    volumes:
+      - /home/cikuu/kvrocks-eev-128m:/tmp/kvrocks
+    restart: unless-stopped
+  mysqleev:
+    image: wrask/mysql:5.5
+    #docker run --name=mysqleev --env='MYSQL_ROOT_PASSWORD=cikuutest!' --env=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/mysql/bin:/usr/local/mysql/scripts --env=GOSU_VERSION=1.7 --env=MYSQL_MAJOR=5.5 --env=MYSQL_VERSION=5.5.62 --volume=/sdb/mysqleev:/var/lib/mysql --volume=/var/lib/mysql -p 3306:3306 --restart=always --detach=true mysql:5.5 --max_allowed_packet=100M --max_connections=1000
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: cikuutest!
+      max_allowed_packet: 100M
+      max_connections: 1000
+    volumes:
+      - /home/cikuu/mysqleev:/var/lib/mysql
+    restart: unless-stopped
